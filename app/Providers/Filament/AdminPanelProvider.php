@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Yellow,
+                'primary' => Color::Orange,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -57,8 +57,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->darkModeBrandLogo(asset('images/logo/dark.svg'))
             ->brandLogo(asset('images/logo/logo.svg'))
-            ->brandLogoHeight('1.5rem')
-            ->brandName('Masth Admin Panel')
+            ->brandLogoHeight('3rem')
+            ->brandName('GoKwik Admin Panel')
             ;
     }
 }

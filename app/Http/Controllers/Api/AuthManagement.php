@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Twilio\Rest\Client as Twilio;
 
 class AuthManagement extends Controller
 {
@@ -20,7 +21,7 @@ class AuthManagement extends Controller
             'phone' => 'required|numeric|exists:users,phone_number|min_digits:7|max_digits:15',
         ], [
             'phone.exists' => 'Phone Number Has Not Registered',
-        
+
             'phone.min_digits' => 'You Have Entered An Invalid Mobile Number',
             'phone.max_digits' => 'You Have Entered An Invalid Mobile Number'
         ]);
@@ -158,7 +159,7 @@ class AuthManagement extends Controller
         $request->validate([
             'phone' => 'required|numeric|min_digits:7|max_digits:15',
         ], [
-            
+
             'phone.min_digits' => 'You Have Entered An Invalid Mobile Number',
             'phone.max_digits' => 'You Have Entered An Invalid Mobile Number'
         ]);
@@ -202,17 +203,18 @@ class AuthManagement extends Controller
                 'expire_at' => Carbon::now()->addMinute(10)
             ]);
         };
-        $receiverNumber =  $temp['country_code'] . $number;
-        $message = "Hello\nMasth Verification OTP is " . $otp;
+        $receiverNumber =  '+'.$temp['country_code'] . $number;
+        $message = "Hello\nGokwik Verification OTP is " . $otp;
 
         try {
-            $resp = Http::post('https://wpsender.nexgino.com/api/create-message', [
-                'appkey' => '2351e0b4-e57f-4237-a3fd-c75cb7b160b0',
-                'authkey' => 'enU1ohpiYouXoXWc7xN1s4MANJBtsuGM5B6I7XxsLLIF4sgH4g',
-                'to' => $receiverNumber,
-                'message' => $message,
+            $account_sid = env("TWILIO_SID");
+            $auth_token = env("TWILIO_TOKEN");
+            $twilio_number = env("TWILIO_FROM");
+            $client = new Twilio($account_sid, $auth_token);
+            $client->messages->create($receiverNumber, [
+                'from' => $twilio_number,
+                'body' => $message
             ]);
-
 
             return true;
         } catch (Exception $e) {
