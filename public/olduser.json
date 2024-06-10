@@ -1,0 +1,14 @@
+[
+    {
+        "email": "example@gmail.com",
+        "balance" : "800"
+    },
+    {
+        "email": "sudiptobain8@gmail.com",
+        "balance" : "2800"
+    },
+    {
+        "email": "codeAbinash@gmail.com",
+        "balance" : "1800"
+    }
+    ]
