@@ -57,7 +57,7 @@ class UserResource extends Resource
 
                 Group::make()->schema([
                     Section::make('Profile Picture')->schema([
-                        FileUpload::make('profile_pic')->required()->image()->directory('users/profile')->imageEditor(),
+                        FileUpload::make('profile_pic')->image()->directory('users/profile')->imageEditor(),
                     ])->collapsible()
                 ])
 
