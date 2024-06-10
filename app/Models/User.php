@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
-
+use App\Models\BlockedUser;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -82,5 +82,9 @@ class User extends Authenticatable
     public function GetMining()
     {
        return $this->hasMany(MiningSession::class,'user_id','id');
+    }
+    public function GetBlockStatus()
+    {
+       return $this->hasOne(BlockedUser::class,'user_id','id');
     }
 }

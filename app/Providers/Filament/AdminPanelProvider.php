@@ -59,6 +59,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('images/logo/logo.svg'))
             ->brandLogoHeight('3rem')
             ->brandName('GoKwik Admin Panel')
+            ->favicon(asset('images/favicon.ico'));
             ;
     }
 }

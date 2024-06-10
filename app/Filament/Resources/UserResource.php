@@ -5,23 +5,31 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\CountryInfo;
 use App\Models\User;
-use Filament\Forms\{Form};
-use Filament\Forms\Components\{Group, Section, TextInput, DatePicker, FileUpload, Select};
+use Filament\Tables\Actions\ActionGroup;
 
+use Filament\Tables\Actions\Action;
+
+use Filament\Forms\{Form};
+use Filament\Forms\Components\{Group, Section, TextInput, DatePicker, FileUpload, Select, Textarea};
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+
 use Filament\Tables\Columns\TextColumn;
+use App\Models\BlockedUser;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
+    public static function canCreate(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
@@ -41,7 +49,8 @@ class UserResource extends Resource
                         TextInput::make('phone_number')->hidden(function ($context) {
                             return $context == 'edit';
                         })->required()->numeric()->unique(),
-                        DatePicker::make('date_of_birth')->label('Date Of Birth')->required()
+                        DatePicker::make('date_of_birth')->label('Date Of Birth')->required(),
+                        TextInput::make('coin')->label('Available Coins')->readOnly(),
                     ])->columns(2)
                 ]),
                 //profile pic
@@ -72,20 +81,41 @@ class UserResource extends Resource
                             return "+" . $record->country_code;
                         }
                     ),
-                TextColumn::make('created_at')->dateTime('h:i:sa d-m-y')
+                TextColumn::make('created_at')->dateTime('h:i:sa d-m-y'),
+
             ])
+
             ->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                ActionGroup::make([
+                    Action::make('Ban')
+                        ->requiresConfirmation()
+                        ->form([
+                            Textarea::make('Reason')
+                                ->required(),
+                        ])
+                        ->action(fn (array $data, User $record) =>  self::blockuser($record, 1, $data))
+                        ->hidden(fn (User $record) => $record->GetBlockStatus != null)
+                        ->icon('heroicon-m-no-symbol'),
+                    Action::make('Unban')
+
+                        ->requiresConfirmation()
+                        ->modalDescription(fn (User $record) => "Do You Want To Unban The User \n Ban Reason : " . $record->GetBlockStatus->reason)
+                        ->action(fn (User $record) =>  self::blockuser($record, 0))
+                        ->hidden(fn (User $record) => $record->GetBlockStatus == null)
+                        ->icon('heroicon-m-no-symbol'),
+
+                    Tables\Actions\EditAction::make(),
+                ])->label('Actions')
+                    ->button()
+
+
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])->searchPlaceholder('Search (Name,Email,Phone Number)');;
+
+            ->searchPlaceholder('Search (Name,Email,Phone Number)');;
     }
 
     public static function getRelations(): array
@@ -105,5 +135,24 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
+    }
+    public static function blockuser(User $user, $status, $data = array())
+    {
+        if ($status) {
+            $block = new BlockedUser;
+            $block->user_id = $user->id;
+            $block->reason = $data['Reason'];
+            $block->save();
+            Notification::make()
+                ->success()
+                ->title("User Block SuccessFully")
+                ->send();
+        } else {
+            BlockedUser::where('user_id', $user->id)->delete();
+            Notification::make()
+                ->success()
+                ->title("User Unblock SuccessFully")
+                ->send();
+        }
     }
 }
