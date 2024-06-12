@@ -9,7 +9,15 @@ use App\Models\MiningSession;
 
 class MiningModule extends Controller
 {
-
+    protected $activity;
+    public function __construct(Request $request)
+    {
+       
+        $this->activity = activity()
+        
+        ->event('mine')
+        ->withProperties(['ip' => $request->ip()]);
+    }
     public function checkMiningStatus(Request $request)
     {
 
@@ -60,13 +68,18 @@ class MiningModule extends Controller
                 'message' => 'An Active Mining Session is already Running'
             ]);
         }
+        $session_id = $request->user()->id . time() . rand('10', '99');
         $new = new MiningSession;
-        $new->session_id = $request->user()->id . time() . rand('10', '99');
+
+        $new->session_id = $session_id;
         $new->user_id = $request->user()->id;
         $new->start_time = Carbon::now();
         $new->end_time = Carbon::now()->addHours(3);
         $new->coin = 3;
         $new->save();
+        //logging
+        $this->activity->causedBy($request->user())->log('Mining Session Started ID ' . $session_id);
+        //loggin
         return response()->json([
             'status' => true,
             'message' => 'Mining Session Submit SuccessFully'

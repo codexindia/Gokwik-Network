@@ -14,6 +14,11 @@ use Twilio\Rest\Client as Twilio;
 
 class AuthManagement extends Controller
 {
+    protected $activity;
+    public function __construct(Request $request)
+    {
+        $this->activity = activity()->withProperties(['ip' => $request->ip()]);
+    }
     public function login_OTP(Request $request)
     {
         $request->validate([
@@ -27,6 +32,7 @@ class AuthManagement extends Controller
         ]);
         $temp = ['country_code' => $request->country_code];
         if ($this->genarateotp($request->phone, $temp)) {
+
             return response()->json([
                 'status' => true,
                 'message' => 'OTP send successfully',
@@ -72,6 +78,11 @@ class AuthManagement extends Controller
         //  return  $this->VerifyOTP($request->phone, $request->otp);
         if ($this->VerifyOTP($request->phone, $request->otp)) {
             $checkphone = User::where('phone_number', $request->phone)->first();
+            //logging
+            $this->activity->causedBy($checkphone)
+                ->event('verified')
+                ->log('OTP Verified Token Generated');
+            //logging
             if ($checkphone) {
                 $checkphone->tokens()->delete();
                 $token = $checkphone->createToken('auth_token')->plainTextToken;
@@ -203,8 +214,9 @@ class AuthManagement extends Controller
                 'expire_at' => Carbon::now()->addMinute(10)
             ]);
         };
-        $receiverNumber =  '+'.$temp['country_code'] . $number;
+        $receiverNumber =  '+' . $temp['country_code'] . $number;
         $message = "Hello\nGokwik Verification OTP is " . $otp;
+
 
         try {
             $account_sid = env("TWILIO_SID");

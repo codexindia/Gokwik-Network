@@ -16,6 +16,7 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "pxlrbt/filament-activity-log": "^1.1",
         "twilio/sdk": "^8.1"
     },
     "require-dev": {

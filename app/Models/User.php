@@ -12,9 +12,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\BlockedUser;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable,LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -34,6 +36,12 @@ class User extends Authenticatable
         'referred_by',
         'coin'
     ];
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+        ->logOnly(['name', 'phone_number','date_of_birth']);
+        // Chain fluent methods for configuration options
+    }
     public function getProfilePicAttribute($value)
     {
         if(!$value == null)
