@@ -17,6 +17,7 @@ use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
 use App\Models\PopupBanner;
+
 class PopupImagePage extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
@@ -27,10 +28,10 @@ class PopupImagePage extends Page
     public ?array $data = [];
     public $popupImage;
     public function mount(PopupBanner $PopupBanner): void
-{
-    $this->form->fill($PopupBanner->first()->toArray());
-}
-protected static $ignoreAccessors = true;
+    {
+        $this->form->fill($PopupBanner->first()->toArray());
+    }
+    protected static $ignoreAccessors = true;
 
     public function form(Form $form): Form
     {
@@ -50,15 +51,15 @@ protected static $ignoreAccessors = true;
                         TextInput::make('button_text')->required(),
                         TextInput::make('action_link')->required(),
                         ToggleButtons::make('visibility')
-                       
-                        ->boolean()
-                        ->inline()
+
+                            ->boolean()
+                            ->inline()
 
 
                     ])->columns(2),
 
                 ]),
-            ])->columns(2) ->statePath('data');;
+            ])->columns(2)->statePath('data');;
     }
     protected function getActions(): array
     {
@@ -77,7 +78,7 @@ protected static $ignoreAccessors = true;
     public function save(): void
     {
         PopupBanner::first()->update($this->form->getState());
-      
+
         Notification::make()
             ->title('Saved successfully')
             ->success()
