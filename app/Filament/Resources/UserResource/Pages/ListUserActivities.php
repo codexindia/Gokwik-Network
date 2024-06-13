@@ -26,9 +26,9 @@ class ListUserActivities extends page implements HasTable
 
     public static function table(Table $table): Table
     {
-
+           
         return $table
-            ->query(Activity::query()->whereHasMorph('causer', [\App\Models\User::class]))
+            ->query(Activity::query()->whereHasMorph('causer', [\App\Models\User::class])->orderBy('id','desc'))
             ->columns([
                 TextColumn::make('event')
                     ->label('Event')
@@ -41,22 +41,19 @@ class ListUserActivities extends page implements HasTable
                     ->label('Subject Type')
                     ->searchable()
                     ->sortable(),
-               
+
                 TextColumn::make('properties')
                     ->label('Changes')
                     ->formatStateUsing(fn ($state) => self::formatProperties($state))
                     ->html()
-                    ->searchable() ->size(TextColumn\TextColumnSize::ExtraSmall),
-                    TextColumn::make('created_at')
+                    ->searchable()->size(TextColumn\TextColumnSize::ExtraSmall),
+                TextColumn::make('created_at')
                     ->label('Date')
                     ->dateTime()
                     ->sortable()
-                    ->since()
-                    ,
-                    
+                    ->since(),
+
             ]);
-
-
     }
     public static function formatProperties($properties)
     {
