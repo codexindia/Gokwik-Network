@@ -32,21 +32,21 @@ class ListUserActivities extends page implements HasTable
             ->columns([
                 TextColumn::make('event')
                     ->label('Event')
-                    ->searchable()
+                    
                     ->sortable(),
                 TextColumn::make('description')
-                    ->searchable()
+                    
                     ->sortable(),
                 TextColumn::make('subject_type')
                     ->label('Subject Type')
-                    ->searchable()
+                    
                     ->sortable(),
 
                 TextColumn::make('properties')
                     ->label('Changes')
                     ->formatStateUsing(fn ($state) => self::formatProperties($state))
                     ->html()
-                    ->searchable()->size(TextColumn\TextColumnSize::ExtraSmall),
+                    ->size(TextColumn\TextColumnSize::ExtraSmall),
                 TextColumn::make('created_at')
                     ->label('Date')
                     ->dateTime()
