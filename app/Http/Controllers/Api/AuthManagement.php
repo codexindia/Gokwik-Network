@@ -159,11 +159,17 @@ class AuthManagement extends Controller
             'dob' => $request->dob,
             'lang' => $request->lang,
         ];
-        $this->genarateotp($request->phone, $temp);
-        return response()->json([
-            'status' => true,
-            'message' => 'OTP Send Successfully',
-        ]);
+        if ($this->genarateotp($request->phone, $temp))
+            return response()->json([
+                'status' => true,
+                'message' => 'OTP Send Successfully',
+            ]);
+        else {
+            return response()->json([
+                'status' => false,
+                'message' => 'OTP Send UnsuccessFully Or Limit Exeeded Try Again Later',
+            ]);
+        }
     }
     public function resend(Request $request)
     {
@@ -230,7 +236,7 @@ class AuthManagement extends Controller
 
             return true;
         } catch (Exception $e) {
-            dd("Error: " . $e->getMessage());
+            return 0;
         }
     }
 }
