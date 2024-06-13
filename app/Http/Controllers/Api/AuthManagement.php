@@ -23,15 +23,27 @@ class AuthManagement extends Controller
     {
         $request->validate([
             'country_code' => 'required|numeric',
-            'phone' => 'required|numeric|exists:users,phone_number|min_digits:7|max_digits:15',
+            'phone' => 'required|numeric|min_digits:7|max_digits:15',
         ], [
-            'phone.exists' => 'Phone Number Has Not Registered',
-
             'phone.min_digits' => 'You Have Entered An Invalid Mobile Number',
             'phone.max_digits' => 'You Have Entered An Invalid Mobile Number'
         ]);
         $temp = ['country_code' => $request->country_code];
+        $user = User::where([
+            'country_code' => $request->country_code,
+            'phone_number' => $request->phone
+        ])->first();
+        if ($user == null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'The Mobile Number Has Not Registered Yet'
+            ]);
+        }
         if ($this->genarateotp($request->phone, $temp)) {
+
+            $this->activity->causedBy($user)
+                ->event('Auth')
+                ->log('OTP Generated And SuccessFully Sended');
 
             return response()->json([
                 'status' => true,
@@ -99,6 +111,7 @@ class AuthManagement extends Controller
                 ]);
             }
         } else {
+          
             return response()->json([
                 'status' => false,
                 'message' => 'Your OTP is invalid'
