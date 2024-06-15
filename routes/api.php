@@ -20,6 +20,7 @@ Route::prefix('auth')->controller('AuthManagement')->group(function () {
     Route::post('/SignUp','SignUP');
     Route::post('/SignUp/SendOTP','SignUP_OTP');
     Route::post('/resend_otp','resend');
+    Route::post('/check_username','check_username');
 });
 Route::middleware(['check_sc','auth:sanctum','CheckBan'])->group(function () {
     Route::prefix('profile')->controller('ProfileManager')->group(function(){
