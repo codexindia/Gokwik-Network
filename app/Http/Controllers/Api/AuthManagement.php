@@ -206,14 +206,15 @@ class AuthManagement extends Controller
     {
         $request->validate([
             'phone' => 'required|numeric|min_digits:7|max_digits:15',
+            'country_code' => 'required|numeric'
         ], [
 
             'phone.min_digits' => 'You Have Entered An Invalid Mobile Number',
             'phone.max_digits' => 'You Have Entered An Invalid Mobile Number'
         ]);
         $phone = $request->phone;
-
-        if ($this->genarateotp($phone)) {
+        $temp = ['country_code' => $request->country_code];
+        if ($this->genarateotp($phone,$temp)) {
             return response()->json([
                 'status' => true,
                 'message' => 'Sms Sent Successfully',
