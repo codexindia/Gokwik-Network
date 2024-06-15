@@ -19,6 +19,7 @@ Route::prefix('auth')->controller('AuthManagement')->group(function () {
     Route::post('/login','login_attempt');
     Route::post('/SignUp','SignUP');
     Route::post('/SignUp/SendOTP','SignUP_OTP');
+    Route::post('/resend_otp','resend');
 });
 Route::middleware(['check_sc','auth:sanctum','CheckBan'])->group(function () {
     Route::prefix('profile')->controller('ProfileManager')->group(function(){
