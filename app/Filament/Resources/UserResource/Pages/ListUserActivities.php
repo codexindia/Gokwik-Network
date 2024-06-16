@@ -10,7 +10,9 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Activity;
 
@@ -23,23 +25,32 @@ class ListUserActivities extends page implements HasTable
     protected static string $resource = UserResource::class;
 
     protected static string $view = 'filament.pages.activity';
-
-    public static function table(Table $table): Table
+    protected $record;
+    public function mount($record = null): void
     {
-           
+        $this->record = $record;
+      
+      
+    }
+
+
+
+    public  function table(Table $table): Table
+    {
+
         return $table
-            ->query(Activity::query()->whereHasMorph('causer', [\App\Models\User::class])->orderBy('id','desc'))
+            ->query(Activity::query()->where('causer_id',$this->record)->whereHasMorph('causer', [\App\Models\User::class])->orderBy('id', 'desc'))
             ->columns([
                 TextColumn::make('event')
                     ->label('Event')
-                    
+
                     ->sortable(),
                 TextColumn::make('description')
-                    
+
                     ->sortable(),
                 TextColumn::make('subject_type')
                     ->label('Subject Type')
-                    
+
                     ->sortable(),
 
                 TextColumn::make('properties')
