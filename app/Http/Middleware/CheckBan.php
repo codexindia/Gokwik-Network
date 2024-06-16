@@ -22,7 +22,7 @@ class CheckBan
             return response()->json([
                 'status' => false,
                 'blocked' => true,
-                'Message' => $users->reason,
+                'message' => $users->reason,
             ]);
         }
         return $next($request);

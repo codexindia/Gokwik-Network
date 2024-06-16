@@ -29,8 +29,6 @@ class ListUserActivities extends page implements HasTable
     public function mount($record = null): void
     {
         $this->record = $record;
-      
-      
     }
 
 
@@ -39,7 +37,7 @@ class ListUserActivities extends page implements HasTable
     {
 
         return $table
-            ->query(Activity::query()->where('causer_id',$this->record)->whereHasMorph('causer', [\App\Models\User::class])->orderBy('id', 'desc'))
+            ->query(Activity::query()->whereHasMorph('causer', [\App\Models\User::class])->where('causer_id',$this->record)->orderBy('id', 'desc'))
             ->columns([
                 TextColumn::make('event')
                     ->label('Event')
