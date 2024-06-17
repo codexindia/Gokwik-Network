@@ -53,7 +53,7 @@ if (!function_exists('coin_action')) {
     function sendpush($user_id, $text,$heading = null,$params = [])
     {
        
-        $params['android_channel_id'] = '7fbda4a1-81c5-4eb6-9936-a80543c5c06f';
+       
        
         if ($user_id == null) {
             OneSignal::addParams($params)->sendNotificationToAll(
@@ -65,7 +65,7 @@ if (!function_exists('coin_action')) {
                 $heading
             );
         } else {
-            OneSignal::addParams($params)->sendNotificationToExternalUser(
+         $res = OneSignal::addParams($params)->sendNotificationToExternalUser(
                 $text,
                 $user_id,
                 $url = null,
@@ -73,6 +73,7 @@ if (!function_exists('coin_action')) {
                 $buttons = null,
                 $schedule = null
             );
+            log::info($res);
         }
     }
 }
