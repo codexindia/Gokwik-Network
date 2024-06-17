@@ -5,6 +5,7 @@ use App\Models\CoinsTransaction;
 use App\Models\User;
 use Berkayk\OneSignal\OneSignalFacade as OneSignal;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 if (!function_exists('get_setting')) {
     function get_setting($key, $group = 'general')
@@ -73,7 +74,7 @@ if (!function_exists('coin_action')) {
                 $buttons = null,
                 $schedule = null
             );
-            log::info($res);
+            Log::info($res);
         }
     }
 }
