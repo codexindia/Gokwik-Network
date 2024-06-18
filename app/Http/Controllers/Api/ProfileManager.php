@@ -53,15 +53,15 @@ class ProfileManager extends Controller
         }
 
         $params = [];
-        $params['android_channel_id'] = '7fbda4a1-81c5-4eb6-9936-a80543c5c06f';
-        // OneSignal::addParams($params)->sendNotificationToExternalUser(
-        //     "Your Profile Has Been Updated",
-        //     $user->country_code.$user->phone_number,
-        //     $url = null,
-        //     $data = null,
-        //     $buttons = null,
-        //     $schedule = null
-        // );
+       
+        OneSignal::addParams($params)->sendNotificationToExternalUser(
+            "Your Profile Has Been Updated",
+            $user->country_code.$user->phone_number,
+            $url = null,
+            $data = null,
+            $buttons = null,
+            $schedule = null
+        );
 
         $user->update($update);
         return response()->json([
