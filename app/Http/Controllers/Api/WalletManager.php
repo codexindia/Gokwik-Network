@@ -79,6 +79,7 @@ class WalletManager extends Controller
             $new->save();
             coin_action($check_username->id, $request->coins, 'credit', 'Coin Received From @' . $request->user()->username);
             DB::commit();
+            sendpush($check_username,'Received '.$request->coins.'GKC From @'.$request->user()->username);
             return response()->json([
                 'status' => true,
                 'coins' => $request->coins,
