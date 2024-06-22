@@ -41,7 +41,7 @@ class MinningSession extends Command
                 $update = MiningSession::findOrFail($item->id);
                 $update->status = 'closed';
                 $update->save();
-                sendpush($item->user->country_code . $item->user->phone_number, 'Hey There ! Your Mining Session Has Ended 😨 Come Back And Start Mining Again 💰💸');
+                sendpush($item->user, 'Hey There ! Your Mining Session Has Ended 😨 Come Back And Start Mining Again 💰💸');
                 //push refer bonus
                 $refer_coin = get_setting('referral_coin');
                 if ($item->user->referred_by != null && $item->user->referred_by != "skiped") {

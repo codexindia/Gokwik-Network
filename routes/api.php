@@ -47,7 +47,10 @@ Route::middleware(['check_sc','auth:sanctum','CheckBan'])->group(function () {
     });
     Route::prefix('wallet')->controller('WalletManager')->group(function(){
         Route::post('/getTransaction','getTransaction');
-      
-      
+        Route::post('/getNameByUsername','getNameByUsername');
+    });
+    Route::prefix('notification')->controller('NotificationManager')->group(function(){
+        Route::post('/getNotification','getNotification');
+        Route::post('/markRead','markRead');
     });
 });

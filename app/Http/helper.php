@@ -3,6 +3,7 @@
 use App\Models\Settings;
 use App\Models\CoinsTransaction;
 use App\Models\User;
+use App\Notifications\GeneralNotification;
 use Berkayk\OneSignal\OneSignalFacade as OneSignal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -24,19 +25,20 @@ if (!function_exists('coin_action')) {
 
         $user = User::findOrFail($user_id);
         if ($user)
+        $trx = 'GKC' . $user_id . time() . rand('10', '99');
             $transaction = new CoinsTransaction;
         $transaction->user_id = $user_id;
         $transaction->coin = $coins;
         $transaction->transaction_type = $type;
         $transaction->description = $description;
-        $transaction->transaction_id = 'GKC' . $user_id . time() . rand('10', '99');
+        $transaction->transaction_id = $trx;
         $transaction->status = 'success';
         $transaction->meta = json_encode($meta);
         if ($transaction->save()) {
             if ($type == "credit") {
                 if ($user->increment('coin', $coins)) {
 
-                    return true;
+                    return $trx;
                 } else {
                     return false;
                 }
@@ -51,12 +53,12 @@ if (!function_exists('coin_action')) {
         }
         return false;
     }
-    function sendpush($user_id, $text,$heading = null,$params = [])
+    function sendpush($user, $text, $heading = null, $params = [])
     {
        
        
        
-        if ($user_id == null) {
+        if ($user == null) {
             OneSignal::addParams($params)->sendNotificationToAll(
                 $text,
                 $url = null,
@@ -66,15 +68,17 @@ if (!function_exists('coin_action')) {
                 $heading
             );
         } else {
-         $res = OneSignal::addParams($params)->sendNotificationToExternalUser(
+            $notify['title'] = 'From Masth';
+            $notify['subtitle'] = $text;
+            $user->notify(new GeneralNotification($notify));
+            OneSignal::addParams($params)->sendNotificationToExternalUser(
                 $text,
-                $user_id,
+                $user->country_code . $user->phone_number,
                 $url = null,
                 $data = null,
                 $buttons = null,
                 $schedule = null
             );
-            Log::info($res);
         }
     }
 }

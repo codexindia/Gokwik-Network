@@ -30,7 +30,7 @@ class ReferControll extends Controller
         $user->update([
             'referred_by' => $request->refer_code,
         ]);
-        sendpush($sourceuser->country_code.$sourceuser->phone_number,'@'.$user->username.' Just Joining Through Your Refer Code');
+        sendpush($sourceuser,'@'.$user->username.' Just Joining Through Your Refer Code');
         return response()->json([
             'status' => true,
             'message' => 'Referred Status Updated'

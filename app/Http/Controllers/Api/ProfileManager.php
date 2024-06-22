@@ -37,7 +37,7 @@ class ProfileManager extends Controller
             if ($check != null) {
                 if ($check->balance != null && $check->balance != 0) {
                     if (coin_action($user->id, round($check->balance), 'credit', "Old Coins Migrated", $check)) {
-                        sendpush($user->country_code . $user->phone_number, '@' . $user->username . ' Account Migrated Successfully ✅');
+                        sendpush($user, '@' . $user->username . ' Account Migrated Successfully ✅');
                         DB::delete("DELETE FROM old_balance WHERE email = '$request->email'");
                     }
                 }
