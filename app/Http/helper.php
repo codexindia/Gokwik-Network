@@ -45,7 +45,7 @@ if (!function_exists('coin_action')) {
             } else {
                 if ($user->decrement('coin', $coins)) {
 
-                    return true;
+                    return $trx;
                 } else {
                     return false;
                 }
