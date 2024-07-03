@@ -15,6 +15,6 @@ use Berkayk\OneSignal\OneSignalFacade as OneSignal;
 */
 use Illuminate\Support\Collection;
 
-Route::get('deleteaccount.html',function(){
+Route::get('deleteacount.html',function(){
     return redirect('https://forms.gle/n4Y9ZcjPuNa3szEp9');
 });
